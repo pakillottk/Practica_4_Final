@@ -41,13 +41,6 @@ struct StructPost {
     bool operator<(const StructPost& cp) const {
         return (ciudad < cp.ciudad);
     }
-
-    StructPost() {
-    }
-
-    StructPost(const StructPost& orig) {
-        ciudad = orig.ciudad;
-    }
 };
 
 void mostrarCodigoPost(const CodigoPost& cod) {
@@ -67,7 +60,7 @@ void mostrarCodigoPost(const CodigoPost& cod) {
 int main() {
 
     AVL<StructPost> codigosPostales;
-
+    
     ifstream myfile("free-zipcode-database-Primary.csv");
     if (myfile.is_open()) {
 
@@ -196,13 +189,13 @@ int main() {
                 cout << "Eleccion: ";
                 cin >> eleccion;
                 skipline(cin);
-                cout << endl;
+                cout << endl;                
                 break;
             case 1:
                 StructPost post;
-
+               
                 cout << "Inserte nombre de la ciudad: ";
-                getline(cin >> ws, post.ciudad);
+                getline(cin, post.ciudad);
                 cout << endl;
 
                 StructPost* encontrado = codigosPostales.busquedaNR(post);

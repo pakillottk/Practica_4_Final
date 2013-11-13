@@ -40,7 +40,7 @@ public:
         }
     }
 
-    void insertar(T& dato) {
+    void insertar(const T& dato) {
         lista.insertarFinal(dato);
     }
 

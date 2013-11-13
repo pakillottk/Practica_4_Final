@@ -28,8 +28,7 @@ private:
     
 public:
 
-    NodoAVL(const T& _dato) : dato(_dato), izq(0), der(0), bal(0) {
-    }
+    NodoAVL(const T& _dato) : izq(0), der(0), bal(0) { dato = _dato; }
     
 };
 
@@ -72,50 +71,50 @@ private:
     }
 
     T* insertaNR(const T& dato) {
-        Pila<NodoAVL<T>*&> pila;
-        pila.insertar(raiz);
-
-        while (pila.dato()) {
-            if (pila.dato()->dato < dato) {
-                pila.insertar(pila.dato()->der);
+        Pila<NodoAVL<T>**> pila;        
+        pila.insertar(&raiz);
+        
+        while (*(pila.dato())) {
+            if ((*(pila.dato()))->dato < dato) {
+                pila.insertar(&((*(pila.dato()))->der));                
             } else {
-                pila.insertar(pila.dato()->izq);
+                pila.insertar(&((*(pila.dato()))->izq));                
             }
         }
 
 
-        pila.dato() = new NodoAVL<T>(dato);
-        NodoAVL<T>* insertado = pila.dato();
+        *(pila.dato()) = new NodoAVL<T>(dato);
+        NodoAVL<T>* insertado = *(pila.dato());
 
         short unsigned deltaH = 1;
         while (pila.tam() > 1 && deltaH > 0) {
-            NodoAVL<T>* aux = pila.dato();
+            NodoAVL<T>* aux = *(pila.dato());
             pila.borrar();
 
-            if (pila.dato()->izq == aux)
-                pila.dato()->bal++;
+            if ((*(pila.dato()))->izq == aux)
+               (*(pila.dato()))->bal++;
             else
-                pila.dato()->bal--;
+                (*(pila.dato()))->bal--;
 
-            switch (pila.dato()->bal) {
+            switch ((*(pila.dato()))->bal) {
                 case 0:
                     deltaH = 0;
                     break;
                 case 2:
-                    if (pila.dato()->izq->bal == -1)
-                        rotIzqda(pila.dato()->izq);
+                    if ((*((pila.dato())))->izq->bal == -1)
+                        rotIzqda((*(pila.dato()))->izq);
 
-                    rotDecha(pila.dato());
+                    rotDecha(*(pila.dato()));
                     break;
                 case -2:
-                    if (pila.dato()->der->bal == 1)
-                        rotDecha(pila.dato()->der);
+                    if ((*(pila.dato()))->der->bal == 1)
+                        rotDecha((*(pila.dato()))->der);
 
-                    rotIzqda(pila.dato());
+                    rotIzqda((*(pila.dato())));
             }
         }
 
-        return &(insertado->dato);
+        return &(insertado->dato);         
     }
 
     T* buscar(NodoAVL<T>* &p, const T& dato) {

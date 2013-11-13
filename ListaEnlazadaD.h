@@ -28,12 +28,8 @@ private:
     friend class ListaEnlazadaD<T>;
 public:
 
-    Nodo(T& _dato, Nodo<T>* _sig = 0, Nodo<T>* _ant = 0) :
-    dato(_dato), sig(_sig), ant(_ant) {
-    }
-
-    virtual ~Nodo() {
-    }
+    Nodo(const T& _dato, Nodo<T>* _sig = 0, Nodo<T>* _ant = 0) :
+    sig(_sig), ant(_ant) { dato = _dato;  }
 };
 
 template <typename T>
@@ -44,11 +40,9 @@ private:
     friend class ListaEnlazadaD<T>;
 public:
 
-    Iterador(Nodo<T>* _nodo = 0) : nodo(_nodo) {
-    }
+    Iterador(Nodo<T>* _nodo = 0) : nodo(_nodo) { }
 
-    virtual ~Iterador() {
-    }
+    virtual ~Iterador() { }
 
     void siguiente() {
         nodo = nodo->sig;
@@ -81,15 +75,15 @@ public:
     ListaEnlazadaD() : cabecera(0), cola(0), count(0) {
     }
 
-    Iterador<T> iteradorCabecera() {
+    Iterador<T> iteradorCabecera() const {
         return Iterador<T>(cabecera);
     }
 
-    Iterador<T> iteradorCola() {
+    Iterador<T> iteradorCola() const {
         return Iterador<T>(cola);
     }
 
-    void insertarInicio(T& dato) {
+    void insertarInicio(const T& dato) {
         Nodo<T>* nuevo;
         if (count > 0) {
             nuevo = new Nodo<T>(dato, cabecera, 0);
@@ -104,7 +98,7 @@ public:
         count++;
     }
 
-    void insertarFinal(T& dato) {
+    void insertarFinal(const T& dato) {
         Nodo<T>* nuevo;
         if (count > 0) {
             nuevo = new Nodo<T>(dato, 0, cola);
@@ -117,7 +111,7 @@ public:
         }
     }
 
-    void insertar(T& dato, const Iterador<T>& it) {
+    void insertar(const T& dato, const Iterador<T>& it) {
         Nodo<T>* nuevo;
         if (count > 0) {
             if (it.nodo == 0)
