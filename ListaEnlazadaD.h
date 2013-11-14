@@ -78,12 +78,10 @@ class ListaEnlazadaD{
         ListaEnlazadaD(const ListaEnlazadaD<T>& orig): cabecera(0), cola(0), count(0){                   
             Nodo<T>* nodo = orig.cabecera;
             
-            int contador = 0;
             while(nodo){           
                 T _dato = nodo->dato;
                 insertarFinal(_dato);
-                nodo = nodo->sig;
-                contador++;
+                nodo = nodo->sig;                
             }
         }
         
