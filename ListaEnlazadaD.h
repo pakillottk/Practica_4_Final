@@ -1,14 +1,17 @@
 /* 
  * File:   ListaEnlazadaD.h
- * Author: Pakillottk
+ * Author: USUARIO
  *
- * Created on 29 de octubre de 2013, 18:43
+ * Created on 14 de noviembre de 2013, 15:45
  */
 
 #ifndef LISTAENLAZADAD_H
 #define	LISTAENLAZADAD_H
 
 #include "Excepciones.h"
+
+#include<iostream>
+using namespace std;
 
 template <typename T>
 class Nodo;
@@ -18,233 +21,184 @@ template <typename T>
 class ListaEnlazadaD;
 
 template <typename T>
-class Nodo {
-private:
-    T dato;
-    Nodo<T>* sig;
-    Nodo<T>* ant;
-
-    friend class Iterador<T>;
-    friend class ListaEnlazadaD<T>;
-public:
-
-    Nodo(const T& _dato, Nodo<T>* _sig = 0, Nodo<T>* _ant = 0) :
-    sig(_sig), ant(_ant) { dato = _dato;  }
+class Nodo{
+    private:
+        T dato;
+        Nodo<T>* ant;
+        Nodo<T>* sig;
+        
+        friend class Iterador<T>;
+        friend class ListaEnlazadaD<T>;
+        
+    public:
+        Nodo(const T& _dato, Nodo<T>* _ant = 0, Nodo<T>* _sig = 0)
+                :dato(_dato), ant(_ant), sig(_sig){}                
+            
 };
 
 template <typename T>
-class Iterador {
-private:
-    Nodo<T>* nodo;
-
-    friend class ListaEnlazadaD<T>;
-public:
-
-    Iterador(Nodo<T>* _nodo = 0) : nodo(_nodo) { }
-
-    virtual ~Iterador() { }
-
-    void siguiente() {
-        nodo = nodo->sig;
-    }
-
-    void anterior() {
-        nodo = nodo->ant;
-    }
-
-    T& dato() {
-        return nodo->dato;
-    }
-
-    bool iteradorNulo() {
-        if (nodo == 0)
-            return true;
-
-        return false;
-    }
+class Iterador{
+    private:
+        Nodo<T>* nodo;
+        
+        friend class ListaEnlazadaD<T>;
+        
+    public:
+        Iterador(Nodo<T>* _nodo = 0): nodo(_nodo){}
+        
+        Iterador(const Iterador<T>& orig){ nodo = orig.nodo; }
+        
+        Iterador<T>& operator=(const Iterador<T> orig){ nodo = orig.nodo; }
+        
+        void siguiente(){ nodo = nodo->sig; }
+        
+        void anterior(){ nodo = nodo->ant; }
+        
+        T& dato(){ if(nodo) return nodo->dato; else throw IteradorNulo(); }
+        
+        bool iteradorNulo() const { return nodo ? false : true;}
 };
 
 template <typename T>
-class ListaEnlazadaD {
-private:
-    Nodo<T>* cabecera;
-    Nodo<T>* cola;
-    unsigned count;
-public:
-
-    ListaEnlazadaD() : cabecera(0), cola(0), count(0) {
-    }
-
-    Iterador<T> iteradorCabecera() const {
-        return Iterador<T>(cabecera);
-    }
-
-    Iterador<T> iteradorCola() const {
-        return Iterador<T>(cola);
-    }
-
-    void insertarInicio(const T& dato) {
-        Nodo<T>* nuevo;
-        if (count > 0) {
-            nuevo = new Nodo<T>(dato, cabecera, 0);
-            cabecera->ant = nuevo;
-            cabecera = nuevo;
-        } else {
-            nuevo = new Nodo<T>(dato);
-            cabecera = nuevo;
-            cola = nuevo;
+class ListaEnlazadaD{
+    private:
+        Nodo<T>* cabecera;
+        Nodo<T>* cola;
+        unsigned long count;
+        
+    public:
+        ListaEnlazadaD(): cabecera(0), cola(0), count(0){}
+        
+        virtual ~ListaEnlazadaD(){           
+            Nodo<T>* nodo = cola;
+            while(nodo){               
+                Nodo<T>* aux = nodo->ant;
+                delete nodo;
+                nodo = aux;
+            }
         }
-
-        count++;
-    }
-
-    void insertarFinal(const T& dato) {
-        Nodo<T>* nuevo;
-        if (count > 0) {
-            nuevo = new Nodo<T>(dato, 0, cola);
-            cola->sig = nuevo;
-            cola = nuevo;
-
+        
+        ListaEnlazadaD(const ListaEnlazadaD<T>& orig): cabecera(0), cola(0), count(0){                   
+            Nodo<T>* nodo = orig.cabecera;
+            
+            int contador = 0;
+            while(nodo){           
+                T _dato = nodo->dato;
+                insertarFinal(_dato);
+                nodo = nodo->sig;
+                contador++;
+            }
+        }
+        
+        Iterador<T> iteradorCabecera() const { return Iterador<T>(cabecera);}
+        Iterador<T> iteradorCola() const {return Iterador<T>(cola);}
+        
+        void insertarInicio(const T& dato){
+            Nodo<T>* nuevo = new Nodo<T>(dato, 0, cabecera);           
+            
+            if(cabecera)
+                cabecera->ant = nuevo;
+            
+            if(cabecera == cola)
+                cola = nuevo;
+            
+            cabecera = nuevo;
+            
             count++;
-        } else {
-            insertarInicio(dato);
         }
-    }
-
-    void insertar(const T& dato, const Iterador<T>& it) {
-        Nodo<T>* nuevo;
-        if (count > 0) {
-            if (it.nodo == 0)
+        
+        void insertarFinal(const T& dato){
+            Nodo<T>* nuevo = new Nodo<T>(dato, cola, 0);
+            
+            if(cola)
+                cola->sig = nuevo;
+            
+            if(!cabecera)
+                cabecera = nuevo;
+            
+            cola = nuevo;
+            
+            count++;
+        }
+        
+        void insertar(const T& dato, const Iterador<T>& it){           
+            if(it.iteradorNulo())
                 throw IteradorNulo();
-
-            if (it.nodo->sig != 0) {
-                nuevo = new Nodo<T>(dato, it.nodo->sig, it.nodo);
+            
+            Nodo<T>* nuevo = new Nodo<T>(dato);           
+           
+            
+            if(it.nodo->sig){
                 it.nodo->sig->ant = nuevo;
-                it.nodo->sig = nuevo;
-
-                count++;
-            } else {
-                insertarFinal(dato);
-            }
-        } else {
-            insertarInicio(dato);
+                nuevo->sig = it.nodo->sig;
+            }else{
+                cola = nuevo;
+            } 
+            
+            nuevo->ant = it.nodo;
+            it.nodo->sig = nuevo;
+            count++;
         }
-    }
-
-    T& ultimoEle() {
-        if (count > 0)
-            return cola->dato;
-        else
-            throw ListaVacia();
-    }
-
-    void borrarInicio() {
-        if (count > 0) {
+        
+        void borrarInicio(){
             Nodo<T>* borrado = cabecera;
-
-            if (count != 1) {
-                cabecera = cabecera->sig;
+            
+            cabecera = cabecera->sig;            
+            if(cabecera)
                 cabecera->ant = 0;
-            } else {
-                cabecera = 0;
-                cola = 0;
-            }
-
-            delete borrado;
-        } else {
-            throw ListaVacia();
-        }
-
-        count--;
-    }
-
-    void borrarFinal() {
-        if (count > 0) {
-            if (count == 1) {
-                delete cola;
-                cabecera = 0;
-                cola = 0;
-            } else {
-                Nodo<T>* borrado = cola;
-                cola = cola->ant;
-                cola->sig = 0;
-                delete borrado;
-            }
-
+            
+            delete borrado;            
             count--;
-        } else {
-            throw ListaVacia();
         }
-    }
-
-    void borrar(Iterador<T>& it) {
-        if (count > 0) {
-            if (it.nodo == 0)
+        
+        void borrarFinal(){
+            Nodo<T>* borrado = cola;
+            
+            cola = cola->ant;
+            if(cola)
+                cola->sig = 0;
+            
+            delete borrado;
+            count--;
+        }
+        
+        void borrar(Iterador<T>& it){
+            if(it.iteradorNulo())
                 throw IteradorNulo();
-
-            if (it.nodo->ant == 0) {
+            
+            Nodo<T>* borrado = it.nodo;
+            
+            if(borrado == cabecera){
                 it.siguiente();
                 borrarInicio();
-            } else {
-                if (it.nodo->sig == 0) {
+            }else{
+                if(borrado == cola){
                     it.anterior();
                     borrarFinal();
-                } else {
-                    Iterador<T> aux = it;
+                }else{
                     it.anterior();
-
-                    aux.nodo->sig->ant = aux.nodo->ant;
-                    aux.nodo->ant->sig = aux.nodo->sig;
-
-                    delete aux.nodo;
-
+                    it.nodo->sig = borrado->sig;
+                    borrado->sig->ant = it.nodo;
+                    
+                    delete borrado;
                     count--;
                 }
             }
-        } else {
-            throw ListaVacia();
         }
-    }
-
-    unsigned tam() const {
-        return count;
-    }
-
-    virtual ~ListaEnlazadaD() {
-        while (count > 0) {
-            borrarFinal();
-        }
-    }
-
-    ListaEnlazadaD(ListaEnlazadaD<T>& orig) {
-        if (orig.count > 0) {
-            Iterador<T> it = orig.iteradorCabecera();
-            while (it.nodo) {
+        
+        long unsigned tam(){ return count; }
+        
+        ListaEnlazadaD<T>& operator=(const ListaEnlazadaD& orig){
+            while(count)
+                borrarFinal();
+            
+            Iterador<T> it = orig.iteradorCabecera();            
+            while(!it.iteradorNulo()){
                 insertarFinal(it.dato());
                 it.siguiente();
             }
         }
-    }
-
-    ListaEnlazadaD<T>& operator=(const ListaEnlazadaD<T>& orig) {
-        if (this != &orig) {
-            if (orig.tam() > 0) {
-                if (count > 0) {
-                    while (count > 0) {
-                        borrarFinal();
-                    }
-                }
-
-                Iterador<T> it = orig.iteradorCabecera();
-                while (it.nodo) {
-                    insertarFinal(it.dato());
-                    it.siguiente();
-                }
-            }
-        }
-
-        return *this;
-    }
 };
 
 #endif	/* LISTAENLAZADAD_H */
+

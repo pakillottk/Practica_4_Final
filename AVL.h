@@ -28,7 +28,7 @@ private:
     
 public:
 
-    NodoAVL(const T& _dato) : izq(0), der(0), bal(0) { dato = _dato; }
+    NodoAVL(const T& _dato) : izq(0), der(0), bal(0), dato(_dato) { }
     
 };
 

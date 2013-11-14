@@ -45,7 +45,8 @@ public:
     }
 
     T& dato() {
-        return lista.ultimoEle();
+        Iterador<T> it = lista.iteradorCola();
+        return it.dato();
     }
 
     unsigned tam() {
