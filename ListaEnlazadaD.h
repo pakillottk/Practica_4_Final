@@ -10,9 +10,6 @@
 
 #include "Excepciones.h"
 
-#include<iostream>
-using namespace std;
-
 template <typename T>
 class Nodo;
 template <typename T>
