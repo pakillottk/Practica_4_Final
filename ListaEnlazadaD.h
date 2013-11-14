@@ -90,7 +90,7 @@ class ListaEnlazadaD{
         Iterador<T> iteradorCabecera() const { return Iterador<T>(cabecera);}
         Iterador<T> iteradorCola() const {return Iterador<T>(cola);}
         
-        void insertarInicio(const T& dato){
+        void insertarInicio(const T& dato){               
             Nodo<T>* nuevo = new Nodo<T>(dato, 0, cabecera);           
             
             if(cabecera)
@@ -104,7 +104,7 @@ class ListaEnlazadaD{
             count++;
         }
         
-        void insertarFinal(const T& dato){
+        void insertarFinal(const T& dato){            
             Nodo<T>* nuevo = new Nodo<T>(dato, cola, 0);
             
             if(cola)
@@ -138,6 +138,9 @@ class ListaEnlazadaD{
         }
         
         void borrarInicio(){
+            if(!count)
+                throw ListaVacia();
+            
             Nodo<T>* borrado = cabecera;
             
             cabecera = cabecera->sig;            
@@ -149,6 +152,9 @@ class ListaEnlazadaD{
         }
         
         void borrarFinal(){
+            if(!count)
+                throw ListaVacia();
+            
             Nodo<T>* borrado = cola;
             
             cola = cola->ant;
@@ -160,6 +166,9 @@ class ListaEnlazadaD{
         }
         
         void borrar(Iterador<T>& it){
+            if(!count)
+                throw ListaVacia();
+            
             if(it.iteradorNulo())
                 throw IteradorNulo();
             
