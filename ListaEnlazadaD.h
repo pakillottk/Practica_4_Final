@@ -193,14 +193,18 @@ class ListaEnlazadaD{
         long unsigned tam(){ return count; }
         
         ListaEnlazadaD<T>& operator=(const ListaEnlazadaD<T>& orig){
-            while(count)
-                borrarFinal();
-            
-            Iterador<T> it = orig.iteradorCabecera();            
-            while(!it.iteradorNulo()){
-                insertarFinal(it.dato());
-                it.siguiente();
+            if(this != &orig){
+                while(count)
+                    borrarFinal();
+
+                Iterador<T> it = orig.iteradorCabecera();            
+                while(!it.iteradorNulo()){
+                    insertarFinal(it.dato());
+                    it.siguiente();
+                }
             }
+            
+            return *this;
         }
 };
 
