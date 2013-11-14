@@ -192,7 +192,7 @@ class ListaEnlazadaD{
         
         long unsigned tam(){ return count; }
         
-        ListaEnlazadaD<T>& operator=(const ListaEnlazadaD& orig){
+        ListaEnlazadaD<T>& operator=(const ListaEnlazadaD<T>& orig){
             while(count)
                 borrarFinal();
             
