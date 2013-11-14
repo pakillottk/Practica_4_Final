@@ -94,7 +94,7 @@ class ListaEnlazadaD{
             if(cabecera)
                 cabecera->ant = nuevo;
             
-            if(cabecera == cola)
+            if(!cola)
                 cola = nuevo;
             
             cabecera = nuevo;
